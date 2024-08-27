@@ -20,9 +20,9 @@ def main():
     SNMP_Port = config.get('COMMUNICATION SETTINGS','SNMP_Port') # SNMP Port
 
     # General settings for pump monitor program
-    Cadance = config.getint('GENERAL CONTROL SETTINGS','Cadance')  # Monitor refresh rate in seconds
-    Display = config.getboolean('GENERAL CONTROL SETTINGS','Display') # Enable Terminal Print
-    SQL_Log = config.getboolean('GENERAL CONTROL SETTINGS','SQL_Log') # Enable BMS logging into SQL
+    Cadance = config.getint('GENERAL MONITOR SETTINGS','Cadance')  # Monitor refresh rate in seconds
+    Display = config.getboolean('GENERAL MONITOR SETTINGS','Display') # Enable Terminal Print
+    SQL_Log = config.getboolean('GENERAL MONITOR SETTINGS','SQL_Log') # Enable BMS logging into SQL
 
     # Specific variables for the SQL database writer
 
