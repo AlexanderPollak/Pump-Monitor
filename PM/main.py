@@ -42,7 +42,7 @@ def main():
     print('Control- Display:' +str(Display))
     print('Control- SQL Data Log:' + str(SQL_Log))
 
-    query_community(version=SNMP_Version,community=SNMP_Community,host=SNMP_Host,port=SNMP_Port)
+    test(version=SNMP_Version,community=SNMP_Community,host=SNMP_Host,port=SNMP_Port)
 
 #   control(Serial_Port=Serial_Port, Modbus_Host=Modbus_Host, Modbus_Address_XW=Modbus_Address_XW, Modbus_Address_MPPT_West=Modbus_Address_MPPT_West,\
 #         Modbus_Address_MPPT_East=Modbus_Address_MPPT_East, Battery_Modules=Battery_Modules, Cadance=Cadance,\
