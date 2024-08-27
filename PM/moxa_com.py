@@ -22,97 +22,33 @@ import time
 from struct import *
 from pyModbusTCP.client import ModbusClient
 
-from pysnmp.carrier.asyncore.dispatch import AsyncoreDispatcher
-from pysnmp.carrier.asyncore.dgram import udp, udp6
-from pyasn1.codec.ber import encoder, decoder
-from pysnmp.proto import api
+from pysnmp.hlapi.v3arch.asyncio import *
+from pysnmp.smi.rfc1902 import ObjectIdentity, ObjectType
 from time import time
 
 # EMBEDDING com CLASS ----------------------------------------------------
 
 def test(version,community,host,port):
 
-    # Protocol version to use
-    pMod = api.PROTOCOL_MODULES[api.SNMP_VERSION_1]
-    # pMod = api.protoModules[api.protoVersion2c]
 
-    # Build PDU
-    reqPDU = pMod.GetRequestPDU()
-    pMod.apiPDU.setDefaults(reqPDU)
-    pMod.apiPDU.setVarBinds(
-        reqPDU, (('1.3.6.1.2.1.1.1.0', pMod.Null('')),
-             ('1.3.6.1.2.1.1.3.0', pMod.Null('')))
-    )
+    with Slim(1) as slim:
+        errorIndication, errorStatus, errorIndex, varBinds = await
+        slim.get(community,host,port,ObjectType(ObjectIdentity("SNMPv2-MIB", "sysDescr", 0)),)
 
-    # Build message
-    reqMsg = pMod.Message()
-    pMod.apiMessage.setDefaults(reqMsg)
-    pMod.apiMessage.setCommunity(reqMsg, community)
-    pMod.apiMessage.setPDU(reqMsg, reqPDU)
-
-    startedAt = time()
+        if errorIndication:
+            print(errorIndication)
+        elif errorStatus:
+            print(
+                "{} at {}".format(
+                    errorStatus.prettyPrint(),
+                    errorIndex and varBinds[int(errorIndex) - 1][0] or "?",
+                )
+            )
+        else:
+            for varBind in varBinds:
+                print(" = ".join([x.prettyPrint() for x in varBind]))
 
 
-    def cbTimerFun(timeNow):
-        if timeNow - startedAt > 3:
-            raise Exception("Request timed out")
-
-
-    # noinspection PyUnusedLocal,PyUnusedLocal
-    def cbRecvFun(transportDispatcher, transportDomain, transportAddress,
-                  wholeMsg, reqPDU=reqPDU):
-        while wholeMsg:
-            rspMsg, wholeMsg = decoder.decode(wholeMsg, asn1Spec=pMod.Message())
-            rspPDU = pMod.apiMessage.getPDU(rspMsg)
-
-            # Match response to request
-            if pMod.apiPDU.getRequestID(reqPDU) == pMod.apiPDU.getRequestID(rspPDU):
-
-                # Check for SNMP errors reported
-                errorStatus = pMod.apiPDU.getErrorStatus(rspPDU)
-                if errorStatus:
-                    print(errorStatus.prettyPrint())
-
-                else:
-                    for oid, val in pMod.apiPDU.getVarBinds(rspPDU):
-                        print('%s = %s' % (oid.prettyPrint(), val.prettyPrint()))
-
-                transportDispatcher.jobFinished(1)
-
-        return wholeMsg
-
-
-    transportDispatcher = AsyncoreDispatcher()
-
-    transportDispatcher.registerRecvCbFun(cbRecvFun)
-    transportDispatcher.registerTimerCbFun(cbTimerFun)
-
-    # UDP/IPv4
-    transportDispatcher.registerTransport(
-        udp.DOMAIN_NAME, udp.UdpSocketTransport().openClientMode()
-    )
-
-    # Pass message to dispatcher
-    transportDispatcher.sendMessage(
-        encoder.encode(reqMsg), udp.DOMAIN_NAME, (host, port)
-    )
-    transportDispatcher.jobStarted(1)
-
-    ## UDP/IPv6 (second copy of the same PDU will be sent)
-    # transportDispatcher.registerTransport(
-    #    udp6.domainName, udp6.Udp6SocketTransport().openClientMode()
-    # )
-
-    # Pass message to dispatcher
-    # transportDispatcher.sendMessage(
-    #    encoder.encode(reqMsg), udp6.domainName, ('::1', 161)
-    # )
-    # transportDispatcher.jobStarted(1)
-
-    # Dispatcher will finish as job#1 counter reaches zero
-    transportDispatcher.runDispatcher()
-
-    transportDispatcher.closeDispatcher()
 
 
 
