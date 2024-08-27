@@ -16,8 +16,8 @@ def main():
     # Communication settings to connect to the Moxa E1242 module.
     SNMP_Host = config.get('COMMUNICATION SETTINGS','SNMP_Host')  # IP Address of the Moxa Module
     SNMP_Version = config.get('COMMUNICATION SETTINGS','SNMP_Version')  # SNMP Version
-    SNMP_Community = config.getint('COMMUNICATION SETTINGS','SNMP_Community') # SNMP Community String
-    SNMP_Port = config.getint('COMMUNICATION SETTINGS','SNMP_Port') # SNMP Port
+    SNMP_Community = config.get('COMMUNICATION SETTINGS','SNMP_Community') # SNMP Community String
+    SNMP_Port = config.get('COMMUNICATION SETTINGS','SNMP_Port') # SNMP Port
 
     # General settings for pump monitor program
     Cadance = config.getint('GENERAL CONTROL SETTINGS','Cadance')  # Monitor refresh rate in seconds
