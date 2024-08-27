@@ -1,5 +1,5 @@
 
-from pysnmp.hlapi import *
+from pysnmp.hlapi.asyncio import *
 
 iterator = getCmd(
     SnmpEngine(),
