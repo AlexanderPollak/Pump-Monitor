@@ -1,7 +1,7 @@
 
 from pysnmp.hlapi.asyncio import *
 
-iterator = getCmd(
+iterator = await getCmd(
     SnmpEngine(),
     CommunityData('public', mpModel=0),
     UdpTransportTarget(('192.168.0.216', 161)),
