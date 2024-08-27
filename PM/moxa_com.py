@@ -28,12 +28,11 @@ from time import time
 
 # EMBEDDING com CLASS ----------------------------------------------------
 
-def test(version,community,host,port):
+async def test(version,community,host,port):
 
 
     with Slim(1) as slim:
-        errorIndication, errorStatus, errorIndex, varBinds = await slim.get(
-            community,host,port,ObjectType(ObjectIdentity("SNMPv2-MIB", "sysDescr", 0)),)
+        errorIndication, errorStatus, errorIndex, varBinds = await slim.get(community,host,port,ObjectType(ObjectIdentity("SNMPv2-MIB", "sysDescr", 0)),)
 
         if errorIndication:
             print(errorIndication)
