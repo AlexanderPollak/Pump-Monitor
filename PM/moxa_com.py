@@ -21,8 +21,64 @@ import numpy as np
 import time
 from struct import *
 from pyModbusTCP.client import ModbusClient
+from pysnmp.entity.rfc3413.oneliner import cmdgen
 
 # EMBEDDING com CLASS ----------------------------------------------------
+
+class SnmpError(Exception):
+    def __init__(self, errorIndication, errorStatus=None):
+        self.errorIndication = errorIndication
+        self.errorStatus = errorStatus
+
+def print_interfaces(varBindTable):
+    # Build up a list of interfaces, and figure out maximum width of columns
+    interfaces = []
+    indexColMax = 5
+    descriptionColMax = 11
+    for row in varBindTable:
+        index = row[0][1].prettyPrint()
+        description = row[1][1].prettyPrint()
+        if len(index) > indexColMax:
+            indexColMax = len(index)
+        if len(description) > descriptionColMax:
+            descriptionColMax = len(description)
+        interfaces.append([index, description])
+
+    # Print the interfaces in a formatted manner
+    print('| {} | {} |'.format('index'.center(indexColMax),
+                               'description'.center(descriptionColMax)))
+    print('-' * (7+indexColMax+descriptionColMax))
+    for interface in interfaces:
+        print('| {} | {} |'.format(interface[0].ljust(indexColMax),
+                                   interface[1].ljust(descriptionColMax)))
+def query_community(version, community, host, port=161, protocol='udp'):
+    gen = cmdgen.CommandGenerator()
+
+    # Specify TCP or UDP
+    if protocol == 'tcp':
+        transportTarget = cmdgen.TcpTransportTarget((host,port))
+    else:
+        transportTarget = cmdgen.UdpTransportTarget((host,port))
+
+    # Query device for ifIndex and ifDescr. This should be enough to ascertain
+    # which interfaces to use.
+    errorIndication, errorStatus, errorIndex, varBindTable = gen.nextCmd(
+        cmdgen.CommunityData(community, mpModel=(1 if version=='2c' else 0)),
+        transportTarget,
+        cmdgen.MibVariable('IF-MIB', 'ifIndex'),
+        cmdgen.MibVariable('IF-MIB', 'ifDescr'),
+        lookupValues=True)
+
+    # Raise exceptions if errors occur
+    if errorIndication:
+        raise SnmpError(errorIndication)
+    else:
+        if errorStatus:
+            raise SnmpError(errorIndication, errorStatus)
+
+    print_interfaces(varBindTable)
+
+
 
 class com(object):
     """This class implements the modbusTCP connection functions """
