@@ -22,86 +22,88 @@ import time
 from struct import *
 from pyModbusTCP.client import ModbusClient
 
-from pysnmp.hlapi.v3arch.asyncio import *
-from pysnmp.smi.rfc1902 import ObjectIdentity, ObjectType
+from pysnmp.hlapi import *
 from time import time
 
 # EMBEDDING com CLASS ----------------------------------------------------
-
-async def test(version,community,host,port):
-
-
-    with Slim(1) as slim:
-        errorIndication, errorStatus, errorIndex, varBinds = await slim.get(community,host,port,ObjectType(ObjectIdentity("SNMPv2-MIB", "sysDescr", 0)),)
-
-        if errorIndication:
-            print(errorIndication)
-        elif errorStatus:
-            print(
-                "{} at {}".format(
-                    errorStatus.prettyPrint(),
-                    errorIndex and varBinds[int(errorIndex) - 1][0] or "?",
-                )
-            )
-        else:
-            for varBind in varBinds:
-                print(" = ".join([x.prettyPrint() for x in varBind]))
 
 
 
 
 
 class com(object):
-    """This class implements the modbusTCP connection functions """
+    """This class implements the SNMP connection functions """
     def __init__(self):
         ''' Constructor for this class. '''
         self._port = 0
+        self._host = 0
+        self._community = 0
+        self._version = 0
+
 
 
     def __del__(self):
         ''' Destructor for this class. '''
-        if self._port !=0:
-            self.close()
 
 
 
 
-    def open (self,SERVER_HOST = "192.168.0.210",SERVER_PORT = 502,SERVER_UNIT = 201):
-        """Open modbus connection to the ComBox
+    def open (self,SNMP_VERSION = 2,SNMP_COMMUNITY = 'public',SNMP_HOST = '192.168.0.216',SNMP_PORT = 161, SNMP_DEVICE = 'E1242'):
+        """Stores prameter to connect to Moxa E1242 via SNMPv1
 
         Args:
-            SERVER_HOST: network address of the ComBox. Default='192.168.0.210'
-            SERVER_PORT: modbus TCP port. Default='502'
-            SERVER_UNIT: modbus address of the ComBox. Default='201'
+            SNMP_VERSION: SNMP Version. Default='2'
+            SNMP_COMMUNITY: SNMP Community String. Default='public'
+            SNMP_HOST: IP Address of the Moxa Module. Default='192.168.0.216'
+            SNMP_PORT: SNMP Port. Default='161'
 
-        Returns: Boolean value True or False
 
-        """
-        self._port = ModbusClient(SERVER_HOST, SERVER_PORT, SERVER_UNIT)
-        if not self._port.is_open():
-            if not self._port.open():
-                print("unable to connect to " + SERVER_HOST + ":" + str(SERVER_PORT))
-
-        return self._port.is_open()
-
-    def close(self):
-        """Closes the modbusTCP connection
-
-        Returns: Boolean value True or False
+        Returns: Null
 
         """
-        self._port.close()
-        return not self._port.is_open()
+        self._port = SNMP_PORT
+        self._host = SNMP_HOST
+        self._community = SNMP_COMMUNITY
+        self._version = SNMP_VERSION
+        self._device = SNMP_DEVICE
+
+
 
     def is_connected(self):
-        """This function checks if the connection to the Schneider Conext ComBox is established
-        and if it responds to readout commands. It requests the firmware version of the ComBox
-        and checks for an received bitstream.
+        """This function checks if the connection to the Moxa E1242 Module is established
+        and if it responds to a readout command. It requests the system description
+        and checks for the correct device.
 
         Returns: Boolean value True or False
 
         return
         """
+        iterator = getCmd(
+            SnmpEngine(),
+            CommunityData(self._community, mpModel=0),
+            UdpTransportTarget((self._host, self._port)),
+            ContextData(),
+            ObjectType(ObjectIdentity('SNMPv2-MIB', 'sysDescr', 0))
+        )
+
+        errorIndication, errorStatus, errorIndex, varBinds = next(iterator)
+
+        if errorIndication:
+            print(errorIndication)
+
+        elif errorStatus:
+            print('%s at %s' % (errorStatus.prettyPrint(),
+                                errorIndex and varBinds[int(errorIndex) - 1][0] or '?'))
+
+        else:
+
+            print(varBind)
+
+
+
+
+
+
         bitstream = self._port.read_holding_registers(0x001E, 7)  # 0x001E Firmware Version str20 r
         if bitstream:
             return True
