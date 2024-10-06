@@ -107,16 +107,12 @@ class E1242(object):
 
         else:
 
-            for varBind in varBinds:
-
-            #print(' = '.join([x.prettyPrint() for x in varBind]))
-
-            varBinds[0].prettyPrint()
+            #for varBind in varBinds:
+            # #print(' = '.join([x.prettyPrint() for x in varBind]))
+            #varBinds[0].prettyPrint()
 
             t = str(varBinds[0].prettyPrint())
-
             daq_dev_model = t.partition("= ")[2]
-
             print(daq_dev_model)
 
             # Check for correct model and return true or false
