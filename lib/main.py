@@ -7,7 +7,7 @@ from mysql_write import *
 
 def main():
     
-    # Import PM gonfiguration values from pm.cfg file in etc directory
+    # Import Pump Monitor gonfiguration values from pm.cfg file in etc directory
     config = configparser.ConfigParser()
     config.read('/usr/local/pump-monitor/etc/pm.cfg') # Location of config file
 
