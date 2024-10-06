@@ -39,7 +39,7 @@ from time import time
 
 
 
-class com(object):
+class COM(object):
     """This class implements the SNMP connection functions """
     def __init__(self):
         ''' Constructor for this class. '''
@@ -105,8 +105,15 @@ class com(object):
 
         else:
 
-            print(varBind)
+            for varBind in varBinds:
 
+                print(' = '.join([x.prettyPrint() for x in varBind]))
+
+                varBinds[0].prettyPrint()
+
+                t = str(varBinds[0].prettyPrint())
+
+                t.partition("= ")[2]
 
 
 
@@ -117,6 +124,14 @@ class com(object):
         #    return True
         #else:
         #    return False
+
+
+
+
+
+
+
+
 
     def reconnect(self, SERVER_HOST = "192.168.0.210",SERVER_PORT = 502,SERVER_UNIT = 201):
         """Reconnects communication with modbus client.
