@@ -3,7 +3,7 @@ from pysnmp.hlapi import *
 
 iterator = getCmd(
     SnmpEngine(),
-    CommunityData('public', mpModel=0),
+    CommunityData('read', mpModel=0),
     UdpTransportTarget(('192.168.0.216', 161)),
     ContextData(),
     ObjectType(ObjectIdentity('SNMPv2-MIB', 'sysName', 0))
