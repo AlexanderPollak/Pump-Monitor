@@ -26,3 +26,5 @@ else:
         t = str(varBinds[0].prettyPrint())
 
         t.partition("= ")[2]
+
+

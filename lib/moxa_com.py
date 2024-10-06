@@ -1,26 +1,34 @@
-""" This module contains classes and functions to establish a communication with the
- Schneider Conext; ComBox, MPPT60 150, and XW+ Battery Inverter.
+""" This module contains classes and functions to establish communication with the
+ Moxa E1200 Remote I/O Server via SNMP.
 
 **Description:**
 
-    The communication is established over ModbusTCP/IP that is provided by the Schneider ComBox.
-    The ComBox is connected via ethernet to the control computer and acts as a media converter
-    to the Xanbus, which links the Schneider devices. The communication is implemented using "pymodbusTCP".
-    The functions in this module will allow to read and write modbus registers of the Schneider devices,
-    thereby allowing it to be controlled remotely. This package includes functions to communicate with following
+    The communication is established over SNMP protocol using the Moxa E1242 v1.2 MIB.
+    The device is accessed via ethernet by the control computer.
+    The functions in this module will allow to read device information and input values via SNMP,
+    thereby allowing it to monitor analog and digital input values of the Remote I/O Server.
+    This package includes functions to communicate with following
     devices:
-        1. Schneider ComBox
-        2. Schneider MPPT60 150
-        3. Schneider XW+ 8548E
-The main class in this module ("conect_com") allows the user to
-communicate with the Schneider devices. Each device then
-has its own class which includes the device specific functions.
+        1. Moxa E1242 Remote I/O Server
+    The main class in this module ("moxa_com") allows the user to
+    read input values of the E1242 device.
+
+    Notes:
+
+    Uses 'snmpget' to aquire data via SNMP v1 and v3.:
+    # installs SNMP package:
+    sudo apt-get install snmp
+    # downloads common SNMP MIBs:
+    sudo apt-get install snmp-mibs-downloader
+    Note that "moxa-e1242-v1.2.mib" needs to be copied into "/usr/share/snmp/mibs/"
+    Note that /etc/snmp/snmp.conf needs to be modified:
+    nano /etc/snmp/snmp.conf
+    change in the fourth line "#mibs" to "mibs ALL"
 
 """
 import numpy as np
 import time
 from struct import *
-from pyModbusTCP.client import ModbusClient
 
 from pysnmp.hlapi import *
 from time import time
@@ -48,7 +56,7 @@ class com(object):
 
 
 
-    def open (self,SNMP_VERSION = 2,SNMP_COMMUNITY = 'public',SNMP_HOST = '192.168.0.216',SNMP_PORT = 161, SNMP_DEVICE = 'E1242'):
+    def open (self,SNMP_VERSION = 2,SNMP_COMMUNITY = 'read',SNMP_HOST = '192.168.0.216',SNMP_PORT = 161, SNMP_DEVICE = 'E1242'):
         """Stores prameter to connect to Moxa E1242 via SNMPv1
 
         Args:
@@ -104,11 +112,11 @@ class com(object):
 
 
 
-        bitstream = self._port.read_holding_registers(0x001E, 7)  # 0x001E Firmware Version str20 r
-        if bitstream:
-            return True
-        else:
-            return False
+        #bitstream = self._port.read_holding_registers(0x001E, 7)  # 0x001E Firmware Version str20 r
+        #if bitstream:
+        #    return True
+        #else:
+        #    return False
 
     def reconnect(self, SERVER_HOST = "192.168.0.210",SERVER_PORT = 502,SERVER_UNIT = 201):
         """Reconnects communication with modbus client.
