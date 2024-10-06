@@ -15,7 +15,7 @@
 
     Notes:
 
-    Uses 'snmpget' to aquire data via SNMP v1 and v3.:
+    Uses 'snmpget' to acquire data via SNMP v1 and v3.:
     # installs SNMP package:
     sudo apt-get install snmp
     # downloads common SNMP MIBs:
@@ -39,7 +39,7 @@ from time import time
 
 
 
-class COM(object):
+class E1242(object):
     """This class implements the SNMP connection functions """
     def __init__(self):
         ''' Constructor for this class. '''
@@ -80,12 +80,14 @@ class COM(object):
     def is_connected(self):
         """This function checks if the connection to the Moxa E1242 Module is established
         and if it responds to a readout command. It requests the system description
-        and checks for the correct device.
+        and checks for the correct device (E1242).
 
         Returns: Boolean value True or False
 
         return
         """
+        dev_model='E1242'
+
         iterator = getCmd(
             SnmpEngine(),
             CommunityData(self._community, mpModel=0),
@@ -107,13 +109,23 @@ class COM(object):
 
             for varBind in varBinds:
 
-                print(' = '.join([x.prettyPrint() for x in varBind]))
+            #print(' = '.join([x.prettyPrint() for x in varBind]))
 
-                varBinds[0].prettyPrint()
+            varBinds[0].prettyPrint()
 
-                t = str(varBinds[0].prettyPrint())
+            t = str(varBinds[0].prettyPrint())
 
-                t.partition("= ")[2]
+            daq_dev_model = t.partition("= ")[2]
+
+            print(daq_dev_model)
+
+            # Check for correct model and return true or false
+            if dev_model == daq_dev_model:
+                print('True')
+            else:
+                print('False')
+
+
 
 
 
