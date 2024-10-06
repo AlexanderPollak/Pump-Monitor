@@ -86,7 +86,7 @@ class E1242(object):
 
         return
         """
-        dev_model='E1242'
+        dev_model = 'E1242'
 
         iterator = getCmd(
             SnmpEngine(),
@@ -107,19 +107,97 @@ class E1242(object):
 
         else:
 
-            #for varBind in varBinds:
-            # #print(' = '.join([x.prettyPrint() for x in varBind]))
-            #varBinds[0].prettyPrint()
-
-            t = str(varBinds[0].prettyPrint())
-            daq_dev_model = t.partition("= ")[2]
-            print(daq_dev_model)
+            tmp = str(varBinds[0].prettyPrint())
+            daq_dev_model = tmp.partition("= ")[2]
 
             # Check for correct model and return true or false
             if dev_model == daq_dev_model:
-                print('True')
+                return True
             else:
-                print('False')
+                return False
+
+
+
+    def read_ai(self,channel):
+        """This function reads the analog input value of the Moxa E1242. Depending on how it is
+        configures in the device it returns the 0-10V value or the 4-20mA value.
+        It returns the scaled value as shown in the web interface as float.
+
+        Note that if the there is an error with the readout it will return the value "-1.0"
+
+        Returns: float {Analog Input Voltage [V] or Analog Input Current [mA]}
+        """
+
+        # the index in SNMP is +1 of the channel number, which means AI channel 0 is equal to index 1
+        index = channel + 1
+
+        # check that the input of the function is within the boundary of 0 to 4, note that this is device specific to E1242
+        Upper_limit = 3  # upper limit channel 3
+        Lower_limit = 0  # Lower limit channel 0
+        if not Lower_limit <= channel <= Upper_limit:
+            print('ERROR: Channel number out of bound. Must be within 0 to 3!')
+            return np.float64(-1)
+
+        iterator_0 = getCmd(
+            SnmpEngine(),
+            CommunityData(self._community, mpModel=0),
+            UdpTransportTarget((self._host, self._port)),
+            ContextData(),
+            ObjectType(ObjectIdentity('MOXA-IO-E1242-MIB', 'aiEnable', index))
+        )
+
+        iterator_1 = getCmd(
+            SnmpEngine(),
+            CommunityData(self._community, mpModel=0),
+            UdpTransportTarget((self._host, self._port)),
+            ContextData(),
+            ObjectType(ObjectIdentity('MOXA-IO-E1242-MIB', 'aiMode', index))
+        )
+
+        iterator_2 = getCmd(
+            SnmpEngine(),
+            CommunityData(self._community, mpModel=0),
+            UdpTransportTarget((self._host, self._port)),
+            ContextData(),
+            ObjectType(ObjectIdentity('MOXA-IO-E1242-MIB', 'aiValueScaled', index))
+        )
+
+        errorIndication_0, errorStatus_0, errorIndex_0, varBinds_0 = next(iterator_0)
+        errorIndication_1, errorStatus_1, errorIndex_1, varBinds_1 = next(iterator_1)
+        errorIndication_2, errorStatus_2, errorIndex_2, varBinds_2 = next(iterator_2)
+
+        # print any error message
+        if errorIndication_0:
+            print(errorIndication_0)
+        elif errorIndication_1:
+            print(errorIndication_1)
+        elif errorIndication_2:
+            print(errorIndication_2)
+        elif errorStatus_0:
+            print('%s at %s' % (errorStatus_0.prettyPrint(), errorIndex_0 and varBinds[int(errorIndex_0) - 1][0] or '?'))
+        elif errorStatus_1:
+            print('%s at %s' % (errorStatus_1.prettyPrint(), errorIndex_1 and varBinds[int(errorIndex_1) - 1][0] or '?'))
+        elif errorStatus_2:
+            print('%s at %s' % (errorStatus_2.prettyPrint(), errorIndex_2 and varBinds[int(errorIndex_2) - 1][0] or '?'))
+        else:
+
+            # Check that input channel is enabled
+            tmp = str(varBinds_0[0].prettyPrint())
+            daq_enabled = tmp.partition("= ")[2]
+            print(daq_enabled)
+
+            if not daq_enabled:
+                print('ERROR: Selected Channel is disabled!')
+                return np.float64(-1)
+
+            # acquire scaled value from analog input channel
+            tmp = str(varBinds_2[0].prettyPrint())
+            daq_ai_value = tmp.partition("= ")[2]
+            print(daq_ai_value)
+
+            return np.float64(str(daq_ai_value))
+
+
 
 
 
