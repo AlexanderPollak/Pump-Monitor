@@ -1,6 +1,7 @@
 #START OF MAIN:
 
 import configparser
+from control import control
 from moxa_com import *
 from mysql_write import *
 
@@ -18,6 +19,7 @@ def main():
     SNMP_Version = config.get('COMMUNICATION SETTINGS','SNMP_Version')  # SNMP Version
     SNMP_Community = config.get('COMMUNICATION SETTINGS','SNMP_Community') # SNMP Community String
     SNMP_Port = config.get('COMMUNICATION SETTINGS','SNMP_Port') # SNMP Port
+    SNMP_Device = config.get('COMMUNICATION SETTINGS', 'SNMP_Device')  # SNMP Device
 
     # General settings for pump monitor program
     Cadance = config.getint('GENERAL MONITOR SETTINGS','Cadance')  # Monitor refresh rate in seconds
@@ -42,14 +44,10 @@ def main():
     print('Control- Display:' +str(Display))
     print('Control- SQL Data Log:' + str(SQL_Log))
 
-    test(SNMP_Version=SNMP_Version,SNMP_Community=SNMP_Community,SNMP_Host=SNMP_Host,SNMP_Port=SNMP_Port)
 
-#   control(Serial_Port=Serial_Port, Modbus_Host=Modbus_Host, Modbus_Address_XW=Modbus_Address_XW, Modbus_Address_MPPT_West=Modbus_Address_MPPT_West,\
-#         Modbus_Address_MPPT_East=Modbus_Address_MPPT_East, Battery_Modules=Battery_Modules, Cadance=Cadance,\
-#         Display=Display, CSV_Log=CSV_Log,SQL_Log=SQL_Log, Control=Control, SoC_high=SoC_high, SoC_low=SoC_low,\
-#         Battery_low=Battery_low, Battery_hysteresis=Battery_hysteresis,Default_battery_low=Default_battery_low,\
-#         Default_battery_hysteresis=Default_battery_hysteresis, Log_file_path=Log_File_Path,\
-#         SQL_Host=SQL_Host,SQL_Auth=SQL_Auth, SQL_User=SQL_User,SQL_Password=SQL_Password,SQL_Database=SQL_Database)
+   control(SNMP_Host=SNMP_Host, SNMP_Version=SNMP_Version, SNMP_Community=SNMP_Community, SNMP_Port=SNMP_Port, SNMP_Device=SNMP_Device, \
+            Cadance=Cadance, Display=Display,SQL_Log=SQL_Log, \
+            SQL_Host=SQL_Host, SQL_Auth=SQL_Auth, SQL_User=SQL_User,SQL_Password=SQL_Password,SQL_Database=SQL_Database)
 
 
 if __name__ == '__main__':
