@@ -242,8 +242,7 @@ class E1242(object):
 
             # acquire boolean valuefrom digital input channel
             tmp = str(varBinds_0[0].prettyPrint())
-            daq_di_value = tmp.partition("= ")[2]
-            print(daq_di_value)
+            daq_di_value =np.int(str(tmp.partition("= ")[2]))
             if daq_di_value == 1:
                 return True
             elif daq_di_value == 0:
