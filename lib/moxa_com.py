@@ -157,11 +157,14 @@ class E1242(object):
 
         iterator_2 = getCmd(
             SnmpEngine(),
-            CommunityData(self._community, mpModel=0),
-            UdpTransportTarget((self._host, self._port)),
+            CommunityData('read', mpModel=0),
+            UdpTransportTarget(('192.168.0.216', 161)),
             ContextData(),
-            ObjectType(ObjectIdentity('MOXA-IO-E1242-MIB', 'aiEnable', index).addAsn1MibSource('file:///usr/share/snmp/mibs/moxa-e1242-v1.2.mib'))
+            ObjectType(ObjectIdentity('moxa-e1242-v1.2', 'aiEnable', 1).addAsn1MibSource('file:///usr/share/snmp/mibs/moxa-e1242-v1.2.mib'))
         )
+
+
+
 
         errorIndication_0, errorStatus_0, errorIndex_0, varBinds_0 = next(iterator_0)
         errorIndication_1, errorStatus_1, errorIndex_1, varBinds_1 = next(iterator_1)
