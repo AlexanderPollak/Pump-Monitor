@@ -184,7 +184,7 @@ class E1242(object):
             # Check that input channel is enabled
             tmp = str(varBinds_0[0].prettyPrint())
             daq_enabled = tmp.partition("= ")[2]
-            print(daq_enabled)
+            #print(daq_enabled)
 
             if not daq_enabled:
                 print('ERROR: Selected Channel is disabled!')
@@ -193,7 +193,7 @@ class E1242(object):
             # acquire scaled value from analog input channel
             tmp = str(varBinds_2[0].prettyPrint())
             daq_ai_value = tmp.partition("= ")[2]
-            print(daq_ai_value)
+            #print(daq_ai_value)
 
             return np.float64(str(daq_ai_value))
 
