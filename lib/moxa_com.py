@@ -118,7 +118,7 @@ class E1242(object):
 
 
 
-    def read_ai(self,channel):
+    def read_ai(self,index):
         """This function reads the analog input value of the Moxa E1242. Depending on how it is
         configures in the device it returns the 0-10V value or the 4-20mA value.
         It returns the scaled value as shown in the web interface as float.
@@ -129,17 +129,17 @@ class E1242(object):
         """
 
         # the index in SNMP is +1 of the channel number, which means AI channel 0 is equal to index 1
-        index = channel + 1
+        #index = np.uint32(channel + 1)
 
         # check that the input of the function is within the boundary of 0 to 4, note that this is device specific to E1242
-        Upper_limit = 3  # upper limit channel 3
-        Lower_limit = 0  # Lower limit channel 0
-        if not Lower_limit <= channel <= Upper_limit:
-            print('ERROR: Channel number out of bound. Must be within 0 to 3!')
-            return np.float64(-1)
+        #Upper_limit = 3  # upper limit channel 3
+        #Lower_limit = 0  # Lower limit channel 0
+        #if not Lower_limit <= channel <= Upper_limit:
+        #    print('ERROR: Channel number out of bound. Must be within 0 to 3!')
+        #    return np.float64(-1)
 
         print(index)
-        
+
         iterator_0 = getCmd(
             SnmpEngine(),
             CommunityData(self._community, mpModel=0),
@@ -164,13 +164,13 @@ class E1242(object):
             ObjectType(ObjectIdentity('MOXA-IO-E1242-MIB', 'aiValueScaled', index))
         )
 
-#        iterator_2 = getCmd(
-#            SnmpEngine(),
-#            CommunityData('read', mpModel=0),
-#            UdpTransportTarget(('192.168.0.216', 161)),
-#            ContextData(),
-#            ObjectType(ObjectIdentity('MOXA-IO-E1242-MIB', 'aiValueScaled', index))
-#        )
+        iterator_2 = getCmd(
+            SnmpEngine(),
+            CommunityData('read', mpModel=0),
+            UdpTransportTarget(('192.168.0.216', 161)),
+            ContextData(),
+            ObjectType(ObjectIdentity('MOXA-IO-E1242-MIB', 'aiEnable', index))
+        )
 
 
         errorIndication_0, errorStatus_0, errorIndex_0, varBinds_0 = next(iterator_0)
