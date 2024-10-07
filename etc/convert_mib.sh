@@ -3,7 +3,7 @@
 
 
 
-#python3  ../lib/mibdump.py --generate-mib-texts --destination-format pysnmp MOXA-IO-E1242-MIB
+python3  ../lib/mibdump.py  --mib-source="file:///usr/local/lib/python3.10/dist-packages/pysnmp/smi/mibs" --destination-directory="/usr/local/lib/python3.10/dist-packages/pysnmp/smi/mibs" --destination-format=pysnmp  /usr/share/snmp/mibs/moxa-e1242-v1.2.mib
 
 
-python3 ../lib/mibdump.py --generate-mib-texts --destination-format=pysnmp  ./moxa-e1242-v1.2.mib
+#python3 ../lib/mibdump.py --generate-mib-texts --destination-format=pysnmp  ./moxa-e1242-v1.2.mib
