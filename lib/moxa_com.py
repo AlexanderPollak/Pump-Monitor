@@ -138,6 +138,8 @@ class E1242(object):
             print('ERROR: Channel number out of bound. Must be within 0 to 3!')
             return np.float64(-1)
 
+        print(index)
+        
         iterator_0 = getCmd(
             SnmpEngine(),
             CommunityData(self._community, mpModel=0),
@@ -162,40 +164,49 @@ class E1242(object):
             ObjectType(ObjectIdentity('MOXA-IO-E1242-MIB', 'aiValueScaled', index))
         )
 
+#        iterator_2 = getCmd(
+#            SnmpEngine(),
+#            CommunityData('read', mpModel=0),
+#            UdpTransportTarget(('192.168.0.216', 161)),
+#            ContextData(),
+#            ObjectType(ObjectIdentity('MOXA-IO-E1242-MIB', 'aiValueScaled', index))
+#        )
+
+
         errorIndication_0, errorStatus_0, errorIndex_0, varBinds_0 = next(iterator_0)
         errorIndication_1, errorStatus_1, errorIndex_1, varBinds_1 = next(iterator_1)
         errorIndication_2, errorStatus_2, errorIndex_2, varBinds_2 = next(iterator_2)
 
         # print any error message
-        if errorIndication_0:
-            print(errorIndication_0)
-        elif errorIndication_1:
-            print(errorIndication_1)
-        elif errorIndication_2:
-            print(errorIndication_2)
-        elif errorStatus_0:
-            print('%s at %s' % (errorStatus_0.prettyPrint(), errorIndex_0 and varBinds[int(errorIndex_0) - 1][0] or '?'))
-        elif errorStatus_1:
-            print('%s at %s' % (errorStatus_1.prettyPrint(), errorIndex_1 and varBinds[int(errorIndex_1) - 1][0] or '?'))
-        elif errorStatus_2:
-            print('%s at %s' % (errorStatus_2.prettyPrint(), errorIndex_2 and varBinds[int(errorIndex_2) - 1][0] or '?'))
-        else:
+#        if errorIndication_0:
+#            print(errorIndication_0)
+#        elif errorIndication_1:
+#            print(errorIndication_1)
+#        elif errorIndication_2:
+#            print(errorIndication_2)
+#        elif errorStatus_0:
+#            print('%s at %s' % (errorStatus_0.prettyPrint(), errorIndex_0 and varBinds[int(errorIndex_0) - 1][0] or '?'))
+#        elif errorStatus_1:
+#            print('%s at %s' % (errorStatus_1.prettyPrint(), errorIndex_1 and varBinds[int(errorIndex_1) - 1][0] or '?'))
+#        elif errorStatus_2:
+#            print('%s at %s' % (errorStatus_2.prettyPrint(), errorIndex_2 and varBinds[int(errorIndex_2) - 1][0] or '?'))
+#        else:
 
-            # Check that input channel is enabled
-            tmp = str(varBinds_0[0].prettyPrint())
-            daq_enabled = tmp.partition("= ")[2]
-            print(daq_enabled)
+        # Check that input channel is enabled
+        tmp = str(varBinds_0[0].prettyPrint())
+        daq_enabled = tmp.partition("= ")[2]
+        print(daq_enabled)
 
-            if not daq_enabled:
-                print('ERROR: Selected Channel is disabled!')
-                return np.float64(-1)
+        if not daq_enabled:
+            print('ERROR: Selected Channel is disabled!')
+            return np.float64(-1)
 
-            # acquire scaled value from analog input channel
-            tmp = str(varBinds_2[0].prettyPrint())
-            daq_ai_value = tmp.partition("= ")[2]
-            print(daq_ai_value)
+        # acquire scaled value from analog input channel
+        tmp = str(varBinds_2[0].prettyPrint())
+        daq_ai_value = tmp.partition("= ")[2]
+        print(daq_ai_value)
 
-            return np.float64(str(daq_ai_value))
+        return np.float64(str(daq_ai_value))
 
 
 
