@@ -104,7 +104,7 @@ aiResetMinValue = MibTableColumn((1, 3, 6, 1, 4, 1, 8691, 10, 1242, 10, 4, 1, 10
 if mibBuilder.loadTexts: aiResetMinValue.setStatus('current')
 aiResetMaxValue = MibTableColumn((1, 3, 6, 1, 4, 1, 8691, 10, 1242, 10, 4, 1, 11), Integer32().subtype(subtypeSpec=ValueRangeConstraint(0, 1))).setMaxAccess("readwrite")
 if mibBuilder.loadTexts: aiResetMaxValue.setStatus('current')
-aiStatus = MibTableColumn((1, 3, 6, 1, 4, 1, 8691, 10, 1242, 10, 4, 1, 12), Integer32().subtype(subtypeSpec=ValueRangeConstraint(1, 4))).setMaxAccess("readonly")
+aiStatus = MibTableColumn((1, 3, 6, 1, 4, 1, 8691, 10, 1242, 10, 4, 1, 12), Integer32().subtype(subtypeSpec=ValueRangeConstraint(0, 3))).setMaxAccess("readonly")
 if mibBuilder.loadTexts: aiStatus.setStatus('current')
 aiBurnoutValue = MibTableColumn((1, 3, 6, 1, 4, 1, 8691, 10, 1242, 10, 4, 1, 13), OctetString()).setMaxAccess("readonly")
 if mibBuilder.loadTexts: aiBurnoutValue.setStatus('current')

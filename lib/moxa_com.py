@@ -86,7 +86,6 @@ class E1242(object):
 
         return
         """
-        dev_model = 'E1242'
 
         iterator = getCmd(
             SnmpEngine(),
@@ -111,7 +110,7 @@ class E1242(object):
             daq_dev_model = tmp.partition("= ")[2]
 
             # Check for correct model and return true or false
-            if dev_model == daq_dev_model:
+            if self._device == daq_dev_model:
                 return True
             else:
                 return False
@@ -175,11 +174,11 @@ class E1242(object):
         elif errorIndication_2:
             print(errorIndication_2)
         elif errorStatus_0:
-            print('%s at %s' % (errorStatus_0.prettyPrint(), errorIndex_0 and varBinds[int(errorIndex_0) - 1][0] or '?'))
+            print('%s at %s' % (errorStatus_0.prettyPrint(), errorIndex_0 and varBinds_0[int(errorIndex_0) - 1][0] or '?'))
         elif errorStatus_1:
-            print('%s at %s' % (errorStatus_1.prettyPrint(), errorIndex_1 and varBinds[int(errorIndex_1) - 1][0] or '?'))
+            print('%s at %s' % (errorStatus_1.prettyPrint(), errorIndex_1 and varBinds_1[int(errorIndex_1) - 1][0] or '?'))
         elif errorStatus_2:
-            print('%s at %s' % (errorStatus_2.prettyPrint(), errorIndex_2 and varBinds[int(errorIndex_2) - 1][0] or '?'))
+            print('%s at %s' % (errorStatus_2.prettyPrint(), errorIndex_2 and varBinds_2[int(errorIndex_2) - 1][0] or '?'))
         else:
 
             # Check that input channel is enabled
@@ -201,16 +200,58 @@ class E1242(object):
 
 
 
+    def read_di(self,channel):
+        """This function reads the digital input of the Moxa E1242.
+        It returns the boolean value True and False depending on the status of the input.
+
+        Note that a high input (voltage present) leads to True value and a low input
+        no voltage present leads to a False value. When comparing to the web interface
+        1 = True and 0 = False
+
+        Returns: Boolean value True or False
+        """
+
+        # the index in SNMP is +1 of the channel number, which means AI channel 0 is equal to index 1
+        index = np.uint32(channel + 1)
+
+        # check that the input of the function is within the boundary of 0 to 4, note that this is device specific to E1242
+        Upper_limit = 3  # upper limit channel 3
+        Lower_limit = 0  # Lower limit channel 0
+        if not Lower_limit <= channel <= Upper_limit:
+            print('ERROR: Channel number out of bound. Must be within 0 to 3!')
+            return np.float64(-1)
+
+        iterator_0 = getCmd(
+            SnmpEngine(),
+            CommunityData(self._community, mpModel=0),
+            UdpTransportTarget((self._host, self._port)),
+            ContextData(),
+            ObjectType(ObjectIdentity('MOXA-IO-E1242-MIB', 'diStatus', index).addAsn1MibSource('file:///usr/local/pump-monitor/etc/MOXA-IO-E1242-MIB.py'))
+        )
+
+        errorIndication_0, errorStatus_0, errorIndex_0, varBinds_0 = next(iterator_0)
 
 
+        # print any error message
+        if errorIndication_0:
+            print(errorIndication_0)
+        elif errorStatus_0:
+            print('%s at %s' % (errorStatus_0.prettyPrint(), errorIndex_0 and varBinds_0[int(errorIndex_0) - 1][0] or '?'))
+        else:
 
 
+            # acquire boolean valuefrom digital input channel
+            tmp = str(varBinds_0[0].prettyPrint())
+            daq_di_value = tmp.partition("= ")[2]
+            print(daq_di_value)
+            if daq_di_value == 1:
+                return True
+            elif daq_di_value == 0:
+                return False
+            else:
+                return None
 
-        #bitstream = self._port.read_holding_registers(0x001E, 7)  # 0x001E Firmware Version str20 r
-        #if bitstream:
-        #    return True
-        #else:
-        #    return False
+
 
 
 
