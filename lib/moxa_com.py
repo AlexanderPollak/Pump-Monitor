@@ -143,7 +143,7 @@ class E1242(object):
             CommunityData(self._community, mpModel=0),
             UdpTransportTarget((self._host, self._port)),
             ContextData(),
-            ObjectType(ObjectIdentity('MOXA-IO-E1242-MIB', 'aiEnable', index))
+            ObjectType(ObjectIdentity('MOXA-IO-E1242-MIB', 'aiEnable', index).addAsn1MibSource('file:///usr/local/pump-monitor/etc/MOXA-IO-E1242-MIB.py'))
         )
 
         iterator_1 = getCmd(
@@ -151,7 +151,7 @@ class E1242(object):
             CommunityData(self._community, mpModel=0),
             UdpTransportTarget((self._host, self._port)),
             ContextData(),
-            ObjectType(ObjectIdentity('MOXA-IO-E1242-MIB', 'aiMode', index))
+            ObjectType(ObjectIdentity('MOXA-IO-E1242-MIB', 'aiMode', index).addAsn1MibSource('file:///usr/local/pump-monitor/etc/MOXA-IO-E1242-MIB.py'))
         )
 
         iterator_2 = getCmd(
@@ -159,7 +159,7 @@ class E1242(object):
             CommunityData(self._community, mpModel=0),
             UdpTransportTarget((self._host, self._port)),
             ContextData(),
-            ObjectType(ObjectIdentity('MOXA-IO-E1242-MIB', 'aiValueScaled', index))
+            ObjectType(ObjectIdentity('MOXA-IO-E1242-MIB', 'aiValueScaled', index).addAsn1MibSource('file:///usr/local/pump-monitor/etc/MOXA-IO-E1242-MIB.py'))
         )
 
 
