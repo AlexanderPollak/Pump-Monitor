@@ -138,13 +138,12 @@ class E1242(object):
             print('ERROR: Channel number out of bound. Must be within 0 to 3!')
             return np.float64(-1)
 
-
         iterator_0 = getCmd(
             SnmpEngine(),
             CommunityData(self._community, mpModel=0),
             UdpTransportTarget((self._host, self._port)),
             ContextData(),
-            ObjectType(ObjectIdentity('MOXA-IO-E1242-MIB', 'aiEnable', index).addAsn1MibSource('file:///usr/share/snmp/mibs/moxa-e1242-v1.2.mib'))
+            ObjectType(ObjectIdentity('MOXA-IO-E1242-MIB', 'aiEnable', index))
         )
 
         iterator_1 = getCmd(
@@ -152,19 +151,16 @@ class E1242(object):
             CommunityData(self._community, mpModel=0),
             UdpTransportTarget((self._host, self._port)),
             ContextData(),
-            ObjectType(ObjectIdentity('MOXA-IO-E1242-MIB', 'aiEnable', index).addAsn1MibSource('file:///usr/share/snmp/mibs/moxa-e1242-v1.2.mib'))
+            ObjectType(ObjectIdentity('MOXA-IO-E1242-MIB', 'aiMode', index))
         )
 
         iterator_2 = getCmd(
             SnmpEngine(),
-            CommunityData('read', mpModel=0),
-            UdpTransportTarget(('192.168.0.216', 161)),
+            CommunityData(self._community, mpModel=0),
+            UdpTransportTarget((self._host, self._port)),
             ContextData(),
-            ObjectType(ObjectIdentity('moxa-e1242-v1.2', 'aiEnable', 1).addAsn1MibSource('file:///usr/share/snmp/mibs/moxa-e1242-v1.2.mib'))
+            ObjectType(ObjectIdentity('MOXA-IO-E1242-MIB', 'aiValueScaled', index))
         )
-
-
-
 
         errorIndication_0, errorStatus_0, errorIndex_0, varBinds_0 = next(iterator_0)
         errorIndication_1, errorStatus_1, errorIndex_1, varBinds_1 = next(iterator_1)
