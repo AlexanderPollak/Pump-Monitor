@@ -84,7 +84,7 @@ class MySQL_com():
             [Water Level, System Temperature, Pump 1 Status, Pump 2 Status, Pump 3 Status, System Fault] dtype=float64 and dtype=str.
 
 
-        DROP TABLE IF EXISTS `pump_data`;
+        DROP TABLE IF EXISTS `pumpdata`;
         CREATE TABLE `pump_data` (
             `ts` datetime NOT NULL,
             `water_level` float DEFAULT (NULL),
@@ -108,7 +108,7 @@ class MySQL_com():
         tmp_PS = PS_LIST
 
         # Preparing SQL query to INSERT a record into the database.
-        tmp_sql = "INSERT INTO pump_data (ts,water_level,temperature,pump1_status,pump2_status,pump3_status,system_status) VALUES (%s,%s,%s,%s,%s,%s,%s)"
+        tmp_sql = "INSERT INTO pumpdata (ts,water_level,temperature,pump1_status,pump2_status,pump3_status,system_status) VALUES (%s,%s,%s,%s,%s,%s,%s)"
         tmp_val = [(tmp_time, tmp_PS[0][0], tmp_PS[0][1], tmp_PS[0][2], tmp_PS[0][3], tmp_PS[0][4], tmp_PS[0][5])]
 
         try:
