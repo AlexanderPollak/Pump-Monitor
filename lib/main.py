@@ -38,11 +38,11 @@ def main():
     ################################################################################################################
 
 
-    print('\n Current Configuration of Pump Monitor Program \n')
+    print('\nCurrent Configuration of Pump Monitor Program \n')
     print('Monitor Cadance: ' + str(Cadance))
-    print('\n')
     print('Control- Display:' +str(Display))
     print('Control- SQL Data Log:' + str(SQL_Log))
+    print('\n')
 
     control(SNMP_Host=SNMP_Host, SNMP_Version=SNMP_Version, SNMP_Community=SNMP_Community, SNMP_Port=SNMP_Port, SNMP_Device=SNMP_Device, \
             Cadance=Cadance, Display=Display,SQL_Log=SQL_Log, \
