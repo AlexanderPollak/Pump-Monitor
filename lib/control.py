@@ -84,7 +84,7 @@ def control(SNMP_Host, SNMP_Version, SNMP_Community, SNMP_Port, SNMP_Device, Cad
                         tmp_lines =1
                         tmp_ps_list = [[0 for i in range(6)] for j in range(tmp_lines)]
                         for x in range(tmp_lines):
-                            tmp_ps_list[x][0] = float(Waterlevel_mm)  # Water Level
+                            tmp_ps_list[x][0] = float(np.float64(Waterlevel_mm/10.0))  # Water Level in cm
                             tmp_ps_list[x][1] = float(0.0)  # System Temperature
                             tmp_ps_list[x][2] = str(Pump_Status_1)   # Status Pump 1
                             tmp_ps_list[x][3] = str(Pump_Status_2)   # Status Pump 2
