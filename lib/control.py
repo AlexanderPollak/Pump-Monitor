@@ -55,50 +55,56 @@ def control(SNMP_Host, SNMP_Version, SNMP_Community, SNMP_Port, SNMP_Device, Cad
             while True:
                 time.sleep(Cadance)
 
-                if Control:  # Condition to Control Inverter Based on SoC
-                    try:
-                        Battery_SoC = PYLONTECH.read_SoC(N_MODULES=Battery_Modules)
-                        Avg_SoC = 0
-                        for i in range(len(Battery_SoC)):
-                            Avg_SoC = Avg_SoC + Battery_SoC[i][0]
-                        Avg_SoC = round(Avg_SoC / Battery_Modules)
+                try:
+                    #Read digital inputs for Pumps and system Fault
+                    Sys_Fault = MOXA.read_di(0)
+                    Pump_Status_1 = MOXA.read_di(1)
+                    Pump_Status_2 = MOXA.read_di(2)
+                    Pump_Status_3 = MOXA.read_di(3)
 
-                        if Avg_SoC >= SoC_high:  # Condition to enable Inverter Grid Support
-                            if Inv.read_Load_Shave_Status() == 'Disable':
-                                Inv.write_Load_Shave_Status('Enable')
-                                print('Grid Support: ON')
-                        if Avg_SoC <= SoC_low:  # Condition to disable Inverter Grid Support
-                            if Inv.read_Load_Shave_Status() == 'Enable':
-                                Inv.write_Load_Shave_Status('Disable')
-                                print('Grid Support: OFF')
-                    except:
-                        error_counter_conext = error_counter_conext + 1
-                        if runtime_error_conext(Inv, ERROR_COUNTER=error_counter_conext,
-                                                MODBUS_ADDRESS=Modbus_Address_XW):
-                            error_counter_conext = 0
+                    #read analog input for waterlevel
+                    Analog_Voltage_WL = MOXA.read_ai(1)
+
+                    #Convert analog voltage to waterlevel in mm [ Y=mx+b ]
+                    m=56.67
+                    b=24.32
+                    Waterlevel_mm = np.float64((Analog_Voltage_WL*m) + b)
+
+                except Exception as error:
+                    del MOXA
+                    del SQL
+                    print('Readout loop error!', error)
 
 
 
 
                 if SQL_Log:
                     try:
-                        SQL.write_BMS(BMS_LIST=tmp_bms_log)
-                        SQL.write_XW(XW_LIST=tmp_xw_log)
-                        SQL.write_MPPT(MPPT_LIST=tmp_mppt_log)
+                        # pack monitor information in list to hand over to SQL class to write into the database
+                        tmp_lines =1
+                        tmp_ps_list = [[0 for i in range(6)] for j in range(tmp_lines)]
+                        for x in range(tmp_lines):
+                            tmp_ps_list[x][0] = float(Waterlevel_mm)  # Water Level
+                            tmp_ps_list[x][1] = float(0.0)  # System Temperature
+                            tmp_ps_list[x][2] = str(Pump_Status_1)   # Status Pump 1
+                            tmp_ps_list[x][3] = str(Pump_Status_2)   # Status Pump 2
+                            tmp_ps_list[x][4] = str(Pump_Status_3)  # Status Pump 3
+                            tmp_ps_list[x][5] = str(Sys_Fault)  # System Fault
+
+                        SQL.write_PS(PS_LIST=tmp_ps_list)
                     except Exception as error:
                         print("SQL_Log error:", error)
 
 
-                if Display:  # Condition to print the SoC in terminal
+                if Display:  # Condition to print the Pump System Status and Water Level in terminal
                     try:
-                        tmp = PYLONTECH.read_SoC(N_MODULES=Battery_Modules)
-                        print('A:' + str(tmp[0][0]) + '\t' + 'B:' + str(tmp[1][0]) + '\t' + 'C:' + str(tmp[2][0]) + '\t' + \
-                              'D:' + str(tmp[3][0]) + '\t' + 'E:' + str(tmp[4][0]) + '\t' + 'F:' + str(tmp[5][0]) + '\t' \
-                             +Inv.read_Inverter_Status())
-                    except:
-                        error_counter_conext=error_counter_conext+1
-                        if runtime_error_conext(Inv,ERROR_COUNTER=error_counter_conext, MODBUS_ADDRESS=Modbus_Address_XW):
-                            error_counter_conext=0
+
+                        print('System Status Fault:' + str(Sys_Fault) + '\t' + 'Pump 1 Active:' + str(Pump_Status_1) + '\t' + 'Pump 2 Active:' + str(Pump_Status_2) + '\t' + \
+                              'Pump 3 Active:' + str(Pump_Status_3) + '\t' + 'Water Level in [cm]:' + str(Waterlevel_mm / 10.0))
+                    except Exception as error:
+                        del MOXA
+                        del SQL
+                        print('Display Values loop error!', error)
 
 
 

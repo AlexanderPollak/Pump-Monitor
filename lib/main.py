@@ -44,8 +44,7 @@ def main():
     print('Control- Display:' +str(Display))
     print('Control- SQL Data Log:' + str(SQL_Log))
 
-
-   control(SNMP_Host=SNMP_Host, SNMP_Version=SNMP_Version, SNMP_Community=SNMP_Community, SNMP_Port=SNMP_Port, SNMP_Device=SNMP_Device, \
+    control(SNMP_Host=SNMP_Host, SNMP_Version=SNMP_Version, SNMP_Community=SNMP_Community, SNMP_Port=SNMP_Port, SNMP_Device=SNMP_Device, \
             Cadance=Cadance, Display=Display,SQL_Log=SQL_Log, \
             SQL_Host=SQL_Host, SQL_Auth=SQL_Auth, SQL_User=SQL_User,SQL_Password=SQL_Password,SQL_Database=SQL_Database)
 
