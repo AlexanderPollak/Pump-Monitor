@@ -172,7 +172,7 @@ mysql> FLUSH PRIVILEGES;
 
 Step 6 - Create a tables in database scpdata
 
-mysql scpdata < /usr/local/pump-monitor/etc/pm-data.sql
+mysql pmdata < /usr/local/pump-monitor/etc/pm-data.sql
 
 
 
