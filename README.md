@@ -159,20 +159,20 @@ mysql> CREATE USER 'grafana'@'localhost' IDENTIFIED WITH authentication_plugin B
 Step 4 - Create new database called: pmdata
 
 mysql
-mysql> CREATE DATABASE pmdata;
+mysql> CREATE DATABASE pumpdata;
 
 
 Step 5 - Create a New User and Grant Permissions in MySQL
 
 mysql
 mysql> CREATE USER 'grafanauser'@'localhost' IDENTIFIED WITH mysql_native_password BY 'password';
-mysql> GRANT ALL on pmdata.* TO 'grafanauser'@'localhost';
+mysql> GRANT ALL on pumpdata.* TO 'grafanauser'@'localhost';
 mysql> FLUSH PRIVILEGES;
 
 
-Step 6 - Create a tables in database scpdata
+Step 6 - Create a tables in database pumpdata
 
-mysql scpdata < /usr/local/pump-monitor/etc/pm-data.sql
+mysql pumpdata < /usr/local/pump-monitor/etc/pm-data.sql
 
 
 
