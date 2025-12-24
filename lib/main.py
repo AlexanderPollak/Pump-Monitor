@@ -10,7 +10,7 @@ def main():
     
     # Import Pump Monitor gonfiguration values from pm.cfg file in etc directory
     config = configparser.ConfigParser()
-    config.read('/usr/local/pump-monitor/etc/pm.cfg') # Location of config file
+    config.read('/usr/local/Pump-Monitor/etc/pm.cfg') # Location of config file
 
     # Parse values into the main function.
 
