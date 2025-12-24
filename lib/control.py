@@ -28,11 +28,11 @@ def control(SNMP_Host, SNMP_Version, SNMP_Community, SNMP_Port, SNMP_Device, Cad
 
         # ---------------------------------------------------------------------------#
         # Connect to MySQL Server
-        SQL= MySQL_com()
-        SQL.open(HOST=SQL_Host,USER =SQL_User,PASSWORD=SQL_Password,DATABASE=SQL_Database,AUTH_PLUGIN=SQL_Auth)
-        time.sleep(1)
-        tmp_s = SQL.is_connected()
-        print('SQL Server Connection Established:' + str(tmp_s))
+        #SQL= MySQL_com()
+        #SQL.open(HOST=SQL_Host,USER =SQL_User,PASSWORD=SQL_Password,DATABASE=SQL_Database,AUTH_PLUGIN=SQL_Auth)
+        #time.sleep(1)
+        #tmp_s = SQL.is_connected()
+        #print('SQL Server Connection Established:' + str(tmp_s))
         # ---------------------------------------------------------------------------#
 
 
@@ -41,9 +41,9 @@ def control(SNMP_Host, SNMP_Version, SNMP_Community, SNMP_Port, SNMP_Device, Cad
         if not (tmp_b):  # Stopps program if connection has not been established.
             print('ERROR: No Connection to MOXA E1242')
             exit()
-        if not (tmp_s):  # Stopps program if connection has not been established.
-            print('ERROR: No Connection to SQL Server!')
-            exit()
+        #if not (tmp_s):  # Stopps program if connection has not been established.
+        #    print('ERROR: No Connection to SQL Server!')
+        #    exit()
         # ---------------------------------------------------------------------------#
 
 
@@ -103,7 +103,7 @@ def control(SNMP_Host, SNMP_Version, SNMP_Community, SNMP_Port, SNMP_Device, Cad
                               'Pump 3 Active:' + str(Pump_Status_3) + '\t' + 'Water Level in [cm]:' + str(Waterlevel_mm / 10.0))
                     except Exception as error:
                         del MOXA
-                        del SQL
+                        #del SQL
                         print('Display Values loop error!', error)
 
 
@@ -119,7 +119,7 @@ def control(SNMP_Host, SNMP_Version, SNMP_Community, SNMP_Port, SNMP_Device, Cad
         except KeyboardInterrupt:
             try:
                 del MOXA
-                del SQL
+                #del SQL
                 print('interrupted!')
             except:
                 print('Monitoring Stop!')
@@ -134,7 +134,7 @@ def control(SNMP_Host, SNMP_Version, SNMP_Community, SNMP_Port, SNMP_Device, Cad
     except KeyboardInterrupt:
         try:
             del MOXA
-            del SQL
+            #del SQL
         except:
             print('Monitoring Stop!')
 
@@ -142,6 +142,6 @@ def control(SNMP_Host, SNMP_Version, SNMP_Community, SNMP_Port, SNMP_Device, Cad
         try:
             del MOXA
 
-            del SQL
+            #del SQL
         except:
             print('Monitoring Stop! Exception'+tmp_exeption)
