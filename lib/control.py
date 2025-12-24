@@ -72,7 +72,7 @@ def control(SNMP_Host, SNMP_Version, SNMP_Community, SNMP_Port, SNMP_Device, Cad
 
                 except Exception as error:
                     del MOXA
-                    del SQL
+                    #del SQL
                     print('Readout loop error!', error)
 
 
