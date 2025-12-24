@@ -92,7 +92,6 @@ def control(SNMP_Host, SNMP_Version, SNMP_Community, SNMP_Port, SNMP_Device, Cad
                             tmp_ps_list[x][5] = str(Sys_Fault)  # System Fault
 
                         SQL.write_PS(PS_LIST=tmp_ps_list)
-                        print(tmp_ps_list)
                     except Exception as error:
                         print("SQL_Log error:", error)
 
